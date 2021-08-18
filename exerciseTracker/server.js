@@ -23,6 +23,7 @@ app.post('/api/users', (req, res) => {
     _id: id,
     username: req.body.username,
     log: [],
+    count: 0,
   })
   res.json({ username : req.body.username, _id: id })
 
@@ -57,6 +58,8 @@ app.post('/api/users/:id/exercises', (req, res) => {
     description: req.body.description,
   });
 
+  input_user.count += 1;
+
   //created temp user object to respond back to user confirming exercise was logged
   var response_object = new Object();
   response_object._id = input_user._id;
@@ -69,6 +72,14 @@ app.post('/api/users/:id/exercises', (req, res) => {
   return res.json(response_object);
 
 });
+
+
+app.get('/api/users/:id/logs', (req, res) => {
+  var input_user = users.find( ({ _id }) => _id === req.params.id );
+  res.json(input_user);
+});
+
+
 
 function RandomHexString(L) {
   var hexstring='';
