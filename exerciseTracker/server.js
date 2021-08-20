@@ -76,7 +76,45 @@ app.post('/api/users/:id/exercises', (req, res) => {
 
 app.get('/api/users/:id/logs', (req, res) => {
   var input_user = users.find( ({ _id }) => _id === req.params.id );
+  
+
+
+  if (req.query.limit) {
+    input_user.log = input_user.log.slice(0, req.query.limit)
+  }
+  if(req.query.to || req.query.from) {
+
+    let from = new Date(0);
+    let to = new Date()
+
+    if(req.query.from) {
+      from = new Date(req.query.from);
+    }
+
+    if(req.query.to) {
+      to = new Date(req.query.to);
+    }
+    
+    //this will straight up delete the entries since I am using an array rather than storing in a db
+    input_user.log = input_user.log.filter((session) => {
+      let sessionDate = new Date(session.date);
+
+      return sessionDate.getTime() >= from.getTime() && sessionDate.getTime() <= to.getTime();
+  });
+};
+  
   res.json(input_user);
+});
+
+app.get("/name", function(req, res) {
+  var firstName = req.query.first;
+  var lastName = req.query.last;
+  // OR you can destructure and rename the keys
+  var { first: firstName, last: lastName } = req.query;
+  // Use template literals to form a formatted string
+  res.json({
+    name: `${firstName} ${lastName}`
+  });
 });
 
 
